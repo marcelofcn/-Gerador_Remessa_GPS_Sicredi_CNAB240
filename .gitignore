@@ -1,0 +1,24 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+.venv/
+venv/
+
+# Excel e Dados (IMPORTANTE: Protege dados do RH)
+*.xlsx
+*.xls
+*.csv
+
+# Arquivos de Remessa gerados
+*.REM
+*.rem
+*.RET
+*.ret
+
+# Docker
+.docker/
+
+# IDEs
+.vscode/
+.idea/
