@@ -4,11 +4,11 @@
 
 #Puxa planilhas do RH (remessa)
 # ID da pasta onde o RH joga o csv 
-ID_REMESSA="ID_DA_SUA_PLANILHA"
+ID_REMESSA="1HY02GCGmzxtpUxJTVJYfNmWMI2CdIea1"
 
 # Puxa retornos do banco (feedback)
 # ID da pasta onde o Financeiro joga o .RET
-ID_RETORNO="ID_DA_SUA_PLANILHA"
+ID_RETORNO="1mFzL7Xi1wD5kP9Ia9YR3rCrOgwf_hLTN"
 
 # 1. Puxa Planilhas do RH
 /usr/bin/rclone move gdrive: /opt/gps-remessa/input --drive-root-folder-id $ID_REMESSA --verbose

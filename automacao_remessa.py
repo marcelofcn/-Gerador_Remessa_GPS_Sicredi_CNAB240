@@ -8,33 +8,21 @@ from watchdog.observers import Observer
 from watchdog.events import FileSystemEventHandler
 from app.services.sicredi.gps_cnab_builder import gerar_cnab_gps_sicredi
 
-# --- codigo no servidor alterado para uso local ---
-
-# --- CONFIGURAÇÕES DINÂMICAS ---
-# Isso pega o caminho de onde o script 'automacao_remessa.py' está localizado
-BASE_PROJECT_DIR = os.path.dirname(os.path.abspath(__file__))
-
-# Se você quiser manter as pastas dentro da pasta do projeto no PC:
-INPUT_DIR = os.path.join(BASE_PROJECT_DIR, "dados", "input")
-OUTPUT_DIR = os.path.join(BASE_PROJECT_DIR, "dados", "output")
-PROCESSED_DIR = os.path.join(BASE_PROJECT_DIR, "dados", "processed")
-NSA_FILE = os.path.join(BASE_PROJECT_DIR, "dados", "nsa.txt")
-
-# --- CONFIGURAÇÕES DE PRODUÇÃO ---servidor linux srv-nome
-#BASE_DIR = "/opt/gps-remessa"
-#INPUT_DIR = f"{BASE_DIR}/input"
-#OUTPUT_DIR = f"{BASE_DIR}/output"
-#PROCESSED_DIR = f"{BASE_DIR}/processed"
-#NSA_FILE = f"{BASE_DIR}/nsa.txt"
+# --- CONFIGURAÇÕES DE PRODUÇÃO ---
+BASE_DIR = "/opt/gps-remessa"
+INPUT_DIR = f"{BASE_DIR}/input"
+OUTPUT_DIR = f"{BASE_DIR}/output"
+PROCESSED_DIR = f"{BASE_DIR}/processed"
+NSA_FILE = f"{BASE_DIR}/nsa.txt"
 
 EMPRESA = {
-    "cnpj": "CNPJ_DA_EMPRESA",
-    "razao_social": "NOME_DA_EMPRESA",
-    "agencia": "CODIGO_AGENCIA_4_DIGITOS",
-    "dv_agencia": "DIGITO_VERIFICADOR_1 DIGITO",
-    "conta": "NUMERO_CONTA_5_DIGITOS",
-    "dv_conta": "DIGITO_VERIFICADOR_1 DIGITO",
-    "convenio": "CODIGO_CONVENIO_COOPERATIVA_FORNECE", # <--- TI: Confirmar código de produção
+    "cnpj": "04251333000144",
+    "razao_social": "COMUNIDADE CANCAO NOVA",
+    "agencia": "0710",
+    "dv_agencia": "2",
+    "conta": "28203",
+    "dv_conta": "5",
+    "convenio": "6XDZ", # <--- TI: Confirmar código de produção
 }
 
 def splash_screen():
