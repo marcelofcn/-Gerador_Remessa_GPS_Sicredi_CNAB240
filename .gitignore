@@ -1,2 +1,4 @@
 # variavel do sistema e senha
 .env
+.sync_drive.sh
+.automacao_remessa.py
