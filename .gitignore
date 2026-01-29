@@ -43,6 +43,7 @@ MANIFEST
 
 # Environment Variables
 .env
+#<<<<<<< HEAD
 .env.local
 .env.development.local
 .env.test.local
@@ -68,3 +69,6 @@ htmlcov/
 .mypy_cache/
 .dmypy.json
 dmypy.json
+#=======
+venv/
+#>>>>>>> 6f16bb7 (inclusao comentarios nos codigos principais)

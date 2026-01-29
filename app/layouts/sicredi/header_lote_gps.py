@@ -1,3 +1,25 @@
+#📌 O que ele faz
+#Cria o registro tipo 1 (Header de Lote) para pagamentos GPS.
+
+#📌 O que identifica
+#Tipo de serviço (22)
+#Tipo de pagamento (17 = GPS)
+#Dados da empresa (CNPJ, convênio, conta)
+#Informações do lote (sempre lote 1 no seu caso)
+
+#📌 Por que existe
+#O CNAB é organizado em lotes./
+#Mesmo que exista só um lote, ele é obrigatório.
+
+#📌 Detalhe importante
+#assert len(linha) == 240
+
+#👏 isso é ouro. Se alguém mexer errado no futuro, o erro aparece na hora.
+
+#📌 Detalhe importante
+#assert len(linha) == 240
+#👏 isso é ouro. Se alguém mexer errado no futuro, o erro aparece na hora
+
 from app.layouts.utils import alfa, num
 
 def gerar_header_lote_gps(

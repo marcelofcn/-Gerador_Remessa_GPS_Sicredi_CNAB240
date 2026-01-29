@@ -1,3 +1,18 @@
+#```🎯 O que este arquivo faz (visão macro)
+
+#Este script é um **daemon simples de monitoramento** que:
+
+#- Fica observando uma pasta (`retorno/input`)
+#- Detecta arquivos `.RET` enviados pelo banco
+#- Processa cada retorno usando o layout Sicredi
+#- Move o arquivo processado para `retorno/processed`
+#- Evita reprocessamento
+#- Serve como **ponte entre banco → sistema**
+
+#👉 Ele **não gera CNAB**, **não valida remessa**,
+
+#👉 Ele **interpreta o feedback do banco**.```
+
 import time
 import os
 import shutil
