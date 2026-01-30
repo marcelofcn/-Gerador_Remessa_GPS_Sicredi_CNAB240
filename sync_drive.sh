@@ -1,21 +1,38 @@
 #!/bin/bash
-# Move os arquivos do Drive para a pasta local input
-# O 'move' baixa e deleta do Drive automaticamente para não processar duas vezes
 
-#Puxa planilhas do RH (remessa)
-# ID da pasta onde o RH joga o csv 
+# Diretório base do projeto (onde está o script)
+BASE_DIR="$(cd "$(dirname "$0")" && pwd)"
+
+INPUT_DIR="$BASE_DIR/input"
+RETORNO_INPUT_DIR="$BASE_DIR/retorno/input"
+RETORNO_PROCESSED_DIR="$BASE_DIR/retorno/processed"
+
+# IDs das pastas no Google Drive
 ID_REMESSA="1HY02GCGmzxtpUxJTVJYfNmWMI2CdIea1"
-
-# Puxa retornos do banco (feedback)
-# ID da pasta onde o Financeiro joga o .RET
 ID_RETORNO="1mFzL7Xi1wD5kP9Ia9YR3rCrOgwf_hLTN"
 
-# 1. Puxa Planilhas do RH
-/usr/bin/rclone move gdrive: /opt/gps-remessa/input --drive-root-folder-id $ID_REMESSA --verbose
+# Garante diretórios locais
+mkdir -p "$INPUT_DIR"
+mkdir -p "$RETORNO_INPUT_DIR"
+mkdir -p "$RETORNO_PROCESSED_DIR"
 
-# 2. Puxa Arquivos de Retorno do Banco
-/usr/bin/rclone move gdrive: /opt/gps-remessa/retorno/input --drive-root-folder-id $ID_RETORNO --verbose
+echo "📥 Baixando planilhas do RH..."
+rclone move gdrive: "$INPUT_DIR" \
+  --drive-root-folder-id "$ID_REMESSA" \
+  --verbose
 
-#Devolve os resumos em txt para o RH ler no google drive
-# 3. DEVOLVE OS RELATÓRIOS TXT PARA O DRIVE (Servidor -> Drive para o RH ler)
-/usr/bin/rclone copy /opt/gps-remessa/retorno/processed/ gdrive: --include "*.txt" --drive-root-folder-id $ID_RETORNO --verbose
+echo "📥 Baixando arquivos de retorno do banco..."
+rclone move gdrive: "$RETORNO_INPUT_DIR" \
+  --drive-root-folder-id "$ID_RETORNO" \
+  --verbose
+
+echo "📤 Devolvendo resumos TXT para o Drive..."
+rclone copy "$RETORNO_PROCESSED_DIR" gdrive: \
+  --include "*.txt" \
+  --drive-root-folder-id "$ID_RETORNO" \
+  --verbose
+
+while true; do
+  bash sync_drive.sh
+  sleep 60
+done
