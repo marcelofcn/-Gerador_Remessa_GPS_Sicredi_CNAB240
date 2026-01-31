@@ -1,3 +1,22 @@
+# --- Automação de Remessa e Retorno ---
+# Bloqueia arquivos de dados reais
+input/*.csv
+input/*.CSV
+output/*.REM
+output/*.rem
+processed/
+retorno/input/
+retorno/processed/
+
+# Bloqueia o contador de remessas local
+nsa.txt
+
+# --- Node / Frontend (Para o outro dev) ---
+node_modules/
+dist/
+build/
+.next/
+
 # Environment Variables
 .env
 .env.local

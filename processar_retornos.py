@@ -1,11 +1,25 @@
+"""
+PROCESSAMENTO AUTOMÁTICO DE RETORNOS BANCÁRIOS (SICREDI)
+--------------------------------------------------------
+Objetivo: Monitorar a pasta 'retorno/input', identificar arquivos de retorno 
+(.RET) enviados pelo banco e processar a liquidação ou erros de títulos.
+
+Fluxo:
+1. Varredura de arquivos .RET -> 2. Leitura e interpretação (CNAB240/400) 
+3. Atualização do banco de dados/sistema via LeitorRetornoSicredi
+4. Movimentação do arquivo para o histórico 'processed'.
+"""
+
 import time
 import shutil
 from pathlib import Path
+from datetime import datetime
 
+# Importação do serviço de leitura de retorno
 from app.services.retorno.leitor_retorno import LeitorRetornoSicredi
 
 # --------------------------------------------------
-# CONFIGURAÇÕES DE CAMINHO
+# CONFIGURAÇÕES DE CAMINHO (ABSOLUTAS)
 # --------------------------------------------------
 
 BASE_DIR = Path(__file__).resolve().parent
@@ -13,10 +27,11 @@ INPUT_RET = BASE_DIR / "retorno" / "input"
 PROC_RET = BASE_DIR / "retorno" / "processed"
 
 # --------------------------------------------------
-# VISUAL
+# INTERFACE VISUAL
 # --------------------------------------------------
 
 def splash_screen():
+    """Exibe o cabeçalho do sistema no terminal."""
     azul = "\033[1;34m"
     amarelo = "\033[1;33m"
     reset = "\033[0m"
@@ -31,54 +46,67 @@ def splash_screen():
     print(f"{azul}         Módulo: RETORNO (Feedback) | Status: ATIVO{reset}\n")
 
 # --------------------------------------------------
-# LOOP DE MONITORAMENTO
+# LÓGICA DE MONITORAMENTO
 # --------------------------------------------------
 
 def monitorar():
-    print("[RETORNO] Monitorando diretório:")
-    print(INPUT_RET.resolve())
-
+    """Loop infinito que verifica a presença de novos arquivos de retorno."""
+    print(f"[RETORNO] Aguardando arquivos em: {INPUT_RET.name}/")
+    
     while True:
-        arquivos = list(INPUT_RET.glob("*.RET")) + list(INPUT_RET.glob("*.ret"))
+        # Busca por extensões .RET e .ret de forma insensível a maiúsculas
+        arquivos = list(INPUT_RET.glob("*.[Rr][Ee][Tt]"))
 
         for arquivo in arquivos:
+            timestamp = datetime.now().strftime("%H:%M:%S")
             try:
-                print("\n[RETORNO | ETAPA 1] Arquivo de retorno detectado")
-                print(f"📄 Nome........: {arquivo.name}")
-                print(f"📂 Origem......: {arquivo.resolve()}")
+                print(f"\n{'-'*60}")
+                print(f"[{timestamp}] NOVO RETORNO DETECTADO")
+                print(f"📄 Arquivo: {arquivo.name}")
 
-                print("[RETORNO | ETAPA 2] Processando retorno bancário (Sicredi)")
+                # ETAPA 1: Processamento lógico
+                print("[RETORNO | PASSO 1] Interpretando layout bancário...")
+                # O método abaixo deve conter a lógica de leitura do CNAB e update no DB
                 LeitorRetornoSicredi.processar_arquivo(str(arquivo))
 
-                print("[RETORNO | ETAPA 3] Retorno interpretado com sucesso")
-
+                # ETAPA 2: Movimentação de segurança
                 destino = PROC_RET / arquivo.name
+                
+                # Se o arquivo já existir no destino, adiciona um sufixo de data/hora para não sobrescrever
+                if destino.exists():
+                    sufixo = datetime.now().strftime("%Y%m%d_%H%M%S")
+                    destino = PROC_RET / f"{arquivo.stem}_{sufixo}{arquivo.suffix}"
 
-                print("[RETORNO | ETAPA 4] Movendo arquivo para processados")
-                print(f"➡️ Destino.....: {destino.resolve()}")
-
+                print("[RETORNO | PASSO 2] Movendo para pasta de processados...")
                 shutil.move(str(arquivo), str(destino))
 
-                print("[RETORNO | SUCESSO] Processamento finalizado")
+                print(f"[RETORNO | SUCESSO] Concluído: {arquivo.name}")
+                print(f"{'-'*60}")
 
             except Exception as e:
-                print("\n[RETORNO | ERRO] Falha no processamento")
-                print(f"📄 Arquivo.....: {arquivo.name}")
-                print(f"📂 Caminho.....: {arquivo.resolve()}")
-                print("❌ Motivo.....:", e)
+                print(f"\n[RETORNO | ❌ ERRO] Falha crítica no arquivo: {arquivo.name}")
+                print(f"⚠️ Motivo: {str(e)}")
+                # Opcional: mover para uma pasta 'error' em vez de deixar travando o loop
+                time.sleep(2) 
 
-        time.sleep(10)
+        # Intervalo entre varreduras (ajustado para 5s para ser mais responsivo)
+        time.sleep(5)
 
 
 # --------------------------------------------------
-# MAIN
+# PONTO DE ENTRADA
 # --------------------------------------------------
 
 if __name__ == "__main__":
     splash_screen()
 
+    # Inicialização de diretórios
     INPUT_RET.mkdir(parents=True, exist_ok=True)
     PROC_RET.mkdir(parents=True, exist_ok=True)
 
-    monitorar()
-
+    try:
+        monitorar()
+    except KeyboardInterrupt:
+        print("\n[RETORNO] Sistema encerrado pelo usuário.")
+    except Exception as e:
+        print(f"\n[SISTEMA] Erro fatal: {e}")

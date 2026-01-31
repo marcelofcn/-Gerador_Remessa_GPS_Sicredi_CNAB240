@@ -1,38 +1,36 @@
 #!/bin/bash
 
-# Diretório base do projeto (onde está o script)
-BASE_DIR="$(cd "$(dirname "$0")" && pwd)"
+################################################################################
+# ORQUESTRADOR DE TRÁFEGO - CANÇÃO NOVA & SICREDI
+################################################################################
 
+BASE_DIR="/home/house/developer/geraremessa"
 INPUT_DIR="$BASE_DIR/input"
-RETORNO_INPUT_DIR="$BASE_DIR/retorno/input"
-RETORNO_PROCESSED_DIR="$BASE_DIR/retorno/processed"
+OUTPUT_DIR="$BASE_DIR/output"
+PROCESSED_DIR="$BASE_DIR/processed/remessas"
 
-# IDs das pastas no Google Drive
-ID_REMESSA="1HY02GCGmzxtpUxJTVJYfNmWMI2CdIea1"
-ID_RETORNO="1mFzL7Xi1wD5kP9Ia9YR3rCrOgwf_hLTN"
+# IDs CONFIRMADOS DO DRIVE
+ID_ENTRADA_RH="1HY02GCGmzxtpUxJTVJYfNmWMI2CdIea1"
+ID_GPS_REMESSA_PRONTA="1rwaQAv51umedVr0QwplMrDm1H34lZ7nq"
+ID_BACKUP_CSV_LIDO="1rmTQKf3bo5ssslsz8j46y_mHLgKJZFvS"
 
-# Garante diretórios locais
-mkdir -p "$INPUT_DIR"
-mkdir -p "$RETORNO_INPUT_DIR"
-mkdir -p "$RETORNO_PROCESSED_DIR"
+echo "------------------------------------------------------------"
+echo "🚀 INICIANDO SINCRONIZAÇÃO: $(date +'%d/%m/%Y %H:%M:%S')"
+echo "------------------------------------------------------------"
 
-echo "📥 Baixando planilhas do RH..."
-rclone move gdrive: "$INPUT_DIR" \
-  --drive-root-folder-id "$ID_REMESSA" \
-  --verbose
+# 1. BUSCA PLANILHA DO RH (Limpa o Drive após baixar para o PC)
+echo "📥 [ENTRADA] Coletando arquivos da pasta GPS_PARA_PROCESSAR..."
+rclone move gdrive: "$INPUT_DIR" --drive-root-folder-id "$ID_ENTRADA_RH" --verbose
 
-echo "📥 Baixando arquivos de retorno do banco..."
-rclone move gdrive: "$RETORNO_INPUT_DIR" \
-  --drive-root-folder-id "$ID_RETORNO" \
-  --verbose
+# 2. ENVIA REMESSAS CNAB PRONTAS (Para o RH baixar e subir no Banco)
+echo "📤 [REMESSA] Enviando arquivos .REM para o Drive..."
+rclone copy "$OUTPUT_DIR" gdrive: --drive-root-folder-id "$ID_GPS_REMESSA_PRONTA" --include "*.REM" --verbose
 
-echo "📤 Devolvendo resumos TXT para o Drive..."
-rclone copy "$RETORNO_PROCESSED_DIR" gdrive: \
-  --include "*.txt" \
-  --drive-root-folder-id "$ID_RETORNO" \
-  --verbose
+# 3. FAZ BACKUP DO CSV PROCESSADO (Para conferência posterior)
+echo "📤 [BACKUP] Enviando cópia do CSV processado para o Drive..."
+rclone copy "$PROCESSED_DIR" gdrive: --drive-root-folder-id "$ID_BACKUP_CSV_LIDO" --include "*.csv" --verbose
 
-while true; do
-  bash sync_drive.sh
-  sleep 60
-done
+echo "------------------------------------------------------------"
+echo "✅ CICLO FINALIZADO COM SUCESSO"
+echo "------------------------------------------------------------"
+while true; do bash sync_drive.sh; sleep 180; done
