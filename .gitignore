@@ -45,3 +45,38 @@ htmlcov/
 .mypy_cache/
 .dmypy.json
 dmypy.json
+
+# Relatórios gerados
+retorno/processed/*.txt
+
+# Arquivos temporários Python
+__pycache__/
+*.pyc
+
+# Sistema operacional
+.DS_Store
+Thumbs.db
+
+# Relatórios gerados
+retorno/processed/*.txt
+
+# Arquivos temporários Python
+__pycache__/
+*.pyc
+
+# Logs
+*.log
+
+# Docs temporários
+docs/*.draft.md
+
+# Relatórios gerados
+retorno/processed/*.txt
+
+# Cache Python
+__pycache__/
+*.pyc
+
+# Sistema
+.DS_Store
+Thumbs.db

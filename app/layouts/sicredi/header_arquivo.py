@@ -1,3 +1,19 @@
+"""
+===============================================================
+PROJETO: Sistema de Remessa CNAB GPS - SICREDI
+EMPRESA: Associação Internacional Privada de Fiéis
+Comunidade Canção Nova - AIPF
+CONVÊNIO: 6XDZ
+
+ARQUIVO: app/layouts/sicredi/header_arquivo.py
+
+VERSÃO: 2.1.0
+DATA: 18/02/2026
+HORA: 18:40
+AMBIENTE: Ubuntu 22.04
+
+"""
+
 from app.layouts.utils import alfa, num
 
 def gerar_header_arquivo_sicredi(
@@ -26,7 +42,7 @@ def gerar_header_arquivo_sicredi(
     linha += alfa(empresa["dv_agencia"], 1) # 058: DV Agência
     linha += num(empresa["conta"], 12)     # 059-070: Conta
     linha += alfa(empresa["dv_conta"], 1)  # 071: DV Conta
-    linha += alfa(" ", 1)                  # 072: DV Ag/Conta
+    linha += alfa("", 1)                  # 072: DV Ag/Conta
     linha += alfa(empresa["razao_social"], 30) # 073-102
     linha += alfa("SICREDI", 30)           # 103-132
     linha += alfa("", 10)                  # 133-142

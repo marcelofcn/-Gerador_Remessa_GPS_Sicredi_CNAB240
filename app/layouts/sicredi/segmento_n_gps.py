@@ -1,51 +1,102 @@
-#3️⃣ segmento_n_gps.py — Segmento N (GPS)
-#📌 O que ele faz
-#Gera o registro tipo 3 – Segmento N, que é onde mora o dinheiro 💰.
+"""
+SEGMENTO_N_GPS.PY
+------------------------------------------------------------
+Gera Registro Detalhe Segmento N - CNAB240
+Banco: Sicredi (748)
+Pagamento: GPS
 
-#📌 Aqui está o coração do sistema
-#Cada contribuinte da planilha vira 1 Segmento N.
+Versão: 2.0.0
+Data: 18/02/2026
+Status: PRODUÇÃO
 
-#📌 Campos críticos
-#Nome do contribuinte
-#Data de pagamento
-#Valor total
-#Dados GPS:
-#Código da receita
-#NIT
-#Competência
-#INSS
-#Juros / multa
+Regra crítica:
+Linha deve conter exatamente 240 posições.
+Valores devem ser calculados com Decimal.
+------------------------------------------------------------
+"""
 
-#📌 Detalhe extremamente importante
-#Você fez corretamente:
-#int(round(valor * 100))
-#➡ CNAB sempre trabalha em centavos, sem vírgula.
-
-#📌 Regra mental
-#“Se o Segmento N estiver certo, o banco paga.
-#Se estiver errado, o banco rejeita ou paga errado.”
-
+from decimal import Decimal, ROUND_HALF_UP
 from app.layouts.utils import alfa, num
 
+
+def _valor_centavos(valor):
+    return int(
+        (Decimal(str(valor)) * 100)
+        .quantize(Decimal("1"), rounding=ROUND_HALF_UP)
+    )
+
+
 def gerar_segmento_n_gps(*, lote, sequencial, contribuinte, data_pagamento):
+
+    if "gps" not in contribuinte:
+        raise ValueError("Contribuinte sem bloco 'gps'.")
+
     gps = contribuinte["gps"]
-    s = "".join(filter(str.isdigit, data_pagamento))
-    dt = f"{s[6:8]}{s[4:6]}{s[0:4]}" if (len(s) == 8 and s[:4].startswith("20") and not s[4:].startswith("20")) else s
-    
+
+    campos_obrigatorios = [
+        "codigo_receita",
+        "tipo_identificacao",
+        "identificacao",
+        "competencia",
+        "valor_inss",
+        "valor_outras_entidades"
+    ]
+
+    for campo in campos_obrigatorios:
+        if campo not in gps:
+            raise ValueError(f"Campo obrigatório ausente no GPS: {campo}")
+
+    # ─────────────────────────────────────────────
+    # DATA PAGAMENTO (DDMMAAAA obrigatório)
+    # ─────────────────────────────────────────────
+    if not data_pagamento or len(data_pagamento) != 8:
+        raise ValueError("Data de pagamento inválida. Esperado DDMMAAAA.")
+
+    dt = data_pagamento
+
+    # ─────────────────────────────────────────────
+    # MONTAGEM DA LINHA
+    # ─────────────────────────────────────────────
+
     linha = ""
-    linha += num("748", 3) + num(lote, 4) + "3" + num(sequencial, 5) + "N" + "000"
-    linha += alfa("", 20) + alfa("", 20) + alfa(contribuinte["nome"], 30)
-    linha += num(dt, 8) + num(int(round(contribuinte["valor_total"] * 100)), 15)
-    
-    # Campos GPS - Alinhamento Crítico
-    linha += alfa(gps["codigo_receita"], 6)  # 4 digitos + 2 espaços
+
+    # Controle
+    linha += num("748", 3)
+    linha += num(lote, 4)
+    linha += "3"
+    linha += num(sequencial, 5)
+    linha += "N"
+    linha += "000"
+
+    # Favorecido
+    linha += alfa("", 20)
+    linha += alfa("", 20)
+    linha += alfa(contribuinte["nome"], 30)
+
+    # Pagamento
+    linha += num(dt, 8)
+    linha += num(_valor_centavos(contribuinte["valor_total"]), 15)
+
+    # GPS
+    linha += alfa(gps["codigo_receita"], 6)
     linha += num(gps["tipo_identificacao"], 2)
     linha += num(gps["identificacao"], 14)
     linha += num("17", 2)
     linha += num(gps["competencia"], 6)
-    linha += num(int(round(gps["valor_inss"] * 100)), 15)
-    linha += num(int(round(gps["valor_outras_entidades"] * 100)), 15)
-    linha += num(int(round(gps.get("atualizacao_monetaria", 0) * 100)), 15)
-    
-    linha += alfa("", 45) + alfa("", 10)
+    linha += num(_valor_centavos(gps["valor_inss"]), 15)
+    linha += num(_valor_centavos(gps["valor_outras_entidades"]), 15)
+    linha += num(_valor_centavos(gps.get("atualizacao_monetaria", 0)), 15)
+
+    # Complemento
+    linha += alfa("", 45)
+    linha += alfa("", 10)
+
+    # ─────────────────────────────────────────────
+    # VALIDAÇÃO FINAL
+    # ─────────────────────────────────────────────
+    if len(linha) != 240:
+        raise ValueError(
+            f"Segmento N inválido: possui {len(linha)} caracteres (esperado 240)."
+        )
+
     return linha

@@ -3,4 +3,4 @@ openpyxl
 watchdog
 requests
 fpdf
-yagmail
+
