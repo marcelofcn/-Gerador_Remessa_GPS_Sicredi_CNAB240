@@ -1,82 +1,165 @@
-# --- Automação de Remessa e Retorno ---
-# Bloqueia arquivos de dados reais
+# =============================================================================
+
+# GERAREMESSA - GITIGNORE
+
+# =============================================================================
+
+# -----------------------------------------------------------------------------
+
+# DADOS REAIS / ARQUIVOS DE PRODUÇÃO
+
+# -----------------------------------------------------------------------------
+
+# Arquivos CSV de entrada
+
 input/*.csv
 input/*.CSV
+
+# Arquivos de remessa gerados
+
 output/*.REM
 output/*.rem
+
+# Diretórios de processamento contendo dados reais
+
 processed/
 retorno/input/
 retorno/processed/
 
-# Bloqueia o contador de remessas local
+# Contador local de remessas
+
 nsa.txt
 
-# --- Node / Frontend (Para o outro dev) ---
+# -----------------------------------------------------------------------------
+
+# SAÍDAS GERADAS LOCALMENTE
+
+# -----------------------------------------------------------------------------
+
+# Saída geral do projeto.
+
+# Contém PDFs, comprovantes, guias, relatórios e outros artefatos gerados.
+
+output/
+
+# Diretório temporário
+
+tmp/
+
+# PDFs reais ou gerados localmente
+
+*.pdf
+
+# -----------------------------------------------------------------------------
+
+# COMPROVANTES / DOCUMENTOS DE DADOS REAIS
+
+# -----------------------------------------------------------------------------
+
+# Comprovantes bancários
+
+comprovantes/
+comprovantes_brutos/
+comprovantes_normalizados/
+
+# Arquivos compactados de contexto ou dados locais
+
+*.tar.gz
+*.zip
+
+# -----------------------------------------------------------------------------
+
+# PYTHON
+
+# -----------------------------------------------------------------------------
+
+venv/
+.venv/
+
+**pycache**/
+*.pyc
+*.pyo
+
+.pytest_cache/
+.mypy_cache/
+.dmypy.json
+dmypy.json
+
+.coverage
+coverage/
+htmlcov/
+
+# -----------------------------------------------------------------------------
+
+# NODE / FRONTEND
+
+# -----------------------------------------------------------------------------
+
 node_modules/
 dist/
 build/
 .next/
 
-# Environment Variables
+# -----------------------------------------------------------------------------
+
+# VARIÁVEIS DE AMBIENTE
+
+# -----------------------------------------------------------------------------
+
 .env
 .env.local
 .env.development.local
 .env.test.local
 .env.production.local
-venv/
 
-# IDEs
+# -----------------------------------------------------------------------------
+
+# IDE / EDITORES
+
+# -----------------------------------------------------------------------------
+
 .idea/
 .vscode/
 *.swp
 *.swo
 
-# Project/Application Specific
+# -----------------------------------------------------------------------------
+
+# APLICAÇÃO / CACHE
+
+# -----------------------------------------------------------------------------
+
 *.log
 *.sqlite
 instance/
-.webassets-cache
-.pytest_cache/
-coverage/
-.coverage
-htmlcov/
+.webassets-cache/
 
-# Type Checking
-.mypy_cache/
-.dmypy.json
-dmypy.json
+# -----------------------------------------------------------------------------
 
-# Relatórios gerados
-retorno/processed/*.txt
+# SISTEMA OPERACIONAL
 
-# Arquivos temporários Python
-__pycache__/
-*.pyc
+# -----------------------------------------------------------------------------
 
-# Sistema operacional
 .DS_Store
 Thumbs.db
 
-# Relatórios gerados
-retorno/processed/*.txt
+# -----------------------------------------------------------------------------
 
-# Arquivos temporários Python
-__pycache__/
-*.pyc
+# DOCUMENTAÇÃO TEMPORÁRIA
 
-# Logs
-*.log
+# -----------------------------------------------------------------------------
 
-# Docs temporários
 docs/*.draft.md
+*:~
 
-# Relatórios gerados
-retorno/processed/*.txt
+# -----------------------------------------------------------------------------
 
-# Cache Python
-__pycache__/
-*.pyc
+# ARQUIVOS TEMPORÁRIOS
 
-# Sistema
-.DS_Store
-Thumbs.db
+# -----------------------------------------------------------------------------
+
+*.tmp
+*.temp
+*.bak
+*.orig
+*~
