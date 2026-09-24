@@ -23,7 +23,7 @@ from app.services.sicredi.gerador_espelho import GeradorEspelhoGPS
 # CONFIGURAÇÃO DO RETROATIVO
 # ============================================================
 
-NOME_ARQUIVO_CSV = "REMESSA_GPS_20260806_130211.csv"
+NOME_ARQUIVO_CSV = "REMESSA_GPS_20260812_103822.csv"
 
 NSA_DAQUELE_DIA = 35
 
