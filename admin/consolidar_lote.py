@@ -108,7 +108,7 @@ PASTA_GUIAS = BASE_DIR / "output" / "espelhos"
 # Pasta onde estão os comprovantes já renomeados pelo gps_renomear.py
 # -----------------------------------------------------------------------------
 
-PASTA_COMPROVANTES = BASE_DIR / "output" / "comprovantes"
+PASTA_COMPROVANTES = BASE_DIR / "output" / "comprovantes_normalizados"
 
 
 # -----------------------------------------------------------------------------
